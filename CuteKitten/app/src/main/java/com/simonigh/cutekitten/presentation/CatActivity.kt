@@ -1,6 +1,5 @@
 package com.simonigh.cutekitten.presentation
 
-import android.nfc.tech.MifareUltralight
 import android.os.Bundle
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -13,9 +12,6 @@ import com.yuyakaido.android.cardstackview.Direction.Right
 import com.yuyakaido.android.cardstackview.StackFrom.TopAndLeft
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
-
-
-
 
 class CatActivity : AppCompatActivity() {
     
@@ -52,7 +48,7 @@ class CatActivity : AppCompatActivity() {
             setCanScrollVertical(false)
             setCanScrollHorizontal(true)
             setMaxDegree(-20.0f)
-            setVisibleCount(5)
+            setVisibleCount(3)
             setTranslationInterval(4.0f)
             setOverlayInterpolator(LinearInterpolator())
             setStackFrom(TopAndLeft)

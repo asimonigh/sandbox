@@ -1,10 +1,9 @@
 package com.simonigh.cutekitten.presentation
 
 import androidx.lifecycle.*
-import com.simonigh.cutekitten.common.Resource.Error
-import com.simonigh.cutekitten.common.Resource.Success
+import com.simonigh.cutekitten.common.Result.Error
+import com.simonigh.cutekitten.common.Result.Success
 import com.simonigh.cutekitten.data.CatRepository
-import com.simonigh.cutekitten.data.model.Cat
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 class CatListViewModel(
@@ -15,17 +14,30 @@ class CatListViewModel(
         get() = _state
     private val _state = MutableLiveData<CatListState>()
     
-    val disposeBag = CompositeDisposable()
+    private val disposeBag = CompositeDisposable()
     
-    var nextPage: Int = 1
+    private var nextPage: Int = 1
     
     init {
         disposeBag.add(
-            catRepository.getCats(page = 1, count = PAGE_SIZE * 2)
+            catRepository.getCats(page = 1, count = PAGE_SIZE)
                 .doOnSuccess { result ->
                     when(result) {
                         is Error -> _state.postValue(CatListState(listOf(), result.message))
-                        is Success -> _state.postValue(CatListState(catList = result.data))
+                        is Success -> _state.postValue(CatListState(catList = result.data!!))
+                    }
+                    nextPage++
+                }.subscribe()
+        )
+    }
+    
+    fun loadMoreCats() {
+        disposeBag.add(
+            catRepository.getCats(page = nextPage, count = PAGE_SIZE)
+                .doOnSuccess { result ->
+                    when(result) {
+                        is Error -> _state.postValue(CatListState(listOf(), result.message))
+                        is Success -> _state.postValue(CatListState(catList = result.data!!))
                     }
                     nextPage++
                 }.subscribe()
@@ -37,21 +49,8 @@ class CatListViewModel(
         disposeBag.clear()
     }
     
-    fun loadMoreCats() {
-        disposeBag.add(
-            catRepository.getCats(page = nextPage, count = PAGE_SIZE)
-                .doOnSuccess { result ->
-                    when(result) {
-                        is Error -> _state.postValue(CatListState(listOf(), result.message))
-                        is Success -> _state.postValue(CatListState(catList = result.data))
-                    }
-                    nextPage++
-                }.subscribe()
-        )
-    }
-    
     companion object {
-        const val PAGE_SIZE = 10
+        const val PAGE_SIZE = 8
     }
 }
 

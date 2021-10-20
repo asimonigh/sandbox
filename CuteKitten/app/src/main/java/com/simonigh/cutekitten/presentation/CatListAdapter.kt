@@ -25,15 +25,22 @@ class CatListAdapter() : RecyclerView.Adapter<ViewHolder>() {
     override fun getItemCount() = itemsList.size
     
     fun addItems(cats: List<Cat>){
-        itemsList.addAll(cats)
-        notifyDataSetChanged()
+        var insertIndex = if(itemsList.lastIndex != -1){
+            itemsList.lastIndex
+        } else 0
+        
+        itemsList.addAll(insertIndex, cats)
+        notifyItemRangeInserted(insertIndex, cats.size)
     }
     
     fun getIdAtPosition(position: Int): String {
         return itemsList[position - 1].id
     }
     
-    fun clear() = itemsList.clear()
+    fun clear() {
+        itemsList.clear()
+        
+    }
     
     class ViewHolder(private val binding: ItemCatBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBind(cat: Cat){
